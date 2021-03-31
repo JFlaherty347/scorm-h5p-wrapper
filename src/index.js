@@ -78,6 +78,7 @@ ON_DEATH(function(signal, err) {
     uploadedFile = req.files.h5p_file;
     const masteryScore = req.body.h5p_mastery_score;
     const gradingMethod = req.body.gradingMethod;
+    const redoPolicy = req.body.redoPolicy;
 
     const uploadedFilePath = uploadTmpDir + "/" + uploadedFile.name;
     const tempDir = tempBaseDir + "/" + uploadedFile.name;
@@ -155,11 +156,10 @@ ON_DEATH(function(signal, err) {
       console.log("Writing JSON to " + jsonDirectory);
 
       await fs.outputJsonSync(jsonDirectory, {gradingMethod: gradingMethod, masteryScore: masteryScore });
-
-      
       
       const adaptorDirectory = path.join(extractDir, "h5p-adaptor.js");
-      const settings = '// settings\nvar gradingMethod = "' + gradingMethod + '";\nvar masteryScore = ' + masteryScore + ';\n\n';
+      const settings = '// settings\nvar gradingMethod = "' + gradingMethod 
+      + '";\nvar masteryScore = ' + masteryScore + ';\nvar redoPolicy = "' + redoPolicy + '";\n\n';
 
       console.log("Settings prepend: " + adaptorDirectory);
       await prependFile(adaptorDirectory, settings);

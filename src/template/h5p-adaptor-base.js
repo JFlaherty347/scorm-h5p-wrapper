@@ -3,9 +3,9 @@
 //
 //important variables
 //
-// var adl = require('adl-xapiwrapper');
-var TinCan = require('tincanjs');
 
+// const fetch = require('node-fetch');
+const https = require('https');
 var scorm = pipwerks.SCORM;
 
 var numberOfQuestions = 0;
@@ -18,37 +18,6 @@ var seperateScore = 0;
 var seperateMinScore = 0;
 var seperateMaxScore = 0;
 var seperateScaledScore = 0;
-
-// var script = document.createElement("script");
-// script.src = './dist/xapiwrapper.min.js'; 
-// document.head.appendChild(script);
-
-// var XAPIWrapper = require("./xapiwrapper");
-
-var lrs;
-
-try
-{
-	lrs = new TinCan.LRS
-	({
-		endpoint: "http://127.0.0.1:3000/data/xAPI/statements/",
-		username: "07936372ee21ec6e03471362062040fac511eddb",
-		password: "f761e6384c9956b722f576568e2543dee1833825",
-		allowFail: false
-	});
-}
-catch (err)
-{
-	console.log("Failed to created LRS object: ", err);
-}
-
-// var conf = {
-//   "endpoint" : "https://lrs.adlnet.gov/xapi/",
-//   "user" : "CIjoe",
-//   "password" : "blueberry",
-// };
-// ADL.XAPIWrapper.changeConfig(conf);
-
 
 function init() {
   scorm.init();
@@ -82,7 +51,6 @@ H5P.externalDispatcher.on('xAPI', function (event) {
 
   console.log('xAPI event: ' + JSON.stringify(event));
   
-  // if(lrs !== null)
   saveStatementToLRS(event);
 
   if(isFreshSession)
@@ -112,6 +80,21 @@ H5P.externalDispatcher.on('xAPI', function (event) {
 //
 // supporting functions
 //
+// var testPHP = function ()
+// {
+//   var ajaxRequest = new XMLHttpRequest();
+
+//   ajaxRequest.onreadystatechange = function()
+//   {
+//     if(ajaxRequest.readyState == 4)
+//     {
+//       console.log("PHP RESULT: ", ajaxRequest.responseText);
+//     }
+//   }
+
+//   ajaxRequest.open("GET", "test.php", true);
+//   ajaxRequest.send(null); 
+// };
 
 var isGradable = function (event)
 {
@@ -313,39 +296,14 @@ var checkForPreviousAttempts = function ()
   isFreshSession = false;
 };
 
-// var saveStatementToLRS = function (event)
-// {
-//   var statement = new TinCan.Statement(event);
-// 	lrs.saveStatement(statement, 
-// 	{
-// 		callback: function(err, xhr) 
-// 		{
-// 			if(err !== null)
-// 			{
-// 				if (xhr !== null)
-// 				{
-// 					console.log("Failed to save xAPI statement: " + xhr.responseText + " (" + xhr.status + ")");
-// 					return;
-// 				}
-
-// 				console.log("Failed to save xAPI statement: " + err);
-// 				return;
-// 			}
-
-//       console.log("xAPI statement saved to LRS successfully");
-// 		}
-
-// 	}
-// 	);
-// };
-
 var saveStatementToLRS = function (event)
 {
-  fetch('http://127.0.0.1:3000/data/xAPI/statements', {
+
+  fetch(' https://lrs-forwarder.herokuapp.com/LRSforwarder', {
     method: "POST",
-    body: event,
-    headers: {Authorization: "Basic MDc5MzYzNzJlZTIxZWM2ZTAzNDcxMzYyMDYyMDQwZmFjNTExZWRkYjpmNzYxZTYzODRjOTk1NmI3MjJmNTc2NTY4ZTI1NDNkZWUxODMzODI1",
-    Access-Control-Allow-Origin: "*"}
+    body: JSON.stringify(event),
+    headers: { "Content-Type": "application/json" }
+    // headers: { 'Access-Control-Allow-Origin': '*'},
   }).then(function(response) 
   {
     return response.json();
@@ -357,9 +315,41 @@ var saveStatementToLRS = function (event)
 
 // var saveStatementToLRS = function (event)
 // {
-// 	var resp_obj = ADL.XAPIWrapper.sendStatement(event);
-// 	ADL.XAPIWrapper.log("[" + resp_obj.id + "]: " + resp_obj.xhr.status + " - " + resp_obj.xhr.statusText);
+//   data = JSON.stringify(event)
+
+//   const options = 
+//   {
+//     hostname: 'https://lrs-forwarder.herokuapp.com',
+//     path: '/LRSforwarder',
+//     method: 'POST',
+//     headers: 
+//     {
+//       'Content-Type': 'application/json',
+//       'X-Experience-API-Version': '1.0.3',
+//       'Access-Control-Allow-Origin': '*'
+//     }
+//   }
+
+//   const req = https.request(options, res => 
+//   {
+//     console.log(`statusCode: ${res.statusCode}`)
+
+//     res.on('data', d => 
+//     {
+//       console.log('Result ' + d)
+//     })
+//   })
+
+//   req.on('error', error => 
+//   {
+//     console.error(error)
+//   })
+
+//   req.write(data)
+//   req.end()
+
 // };
+
 
 // unused
 

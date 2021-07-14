@@ -36,6 +36,7 @@
     "fs-extra": "^8.1.0",
     "h5p-standalone": "^2.1.3",
     "lodash": "^4.17.20",
+    "node-fetch": "^2.6.1",
     "prepend-file": "^2.0.0",
     "simple-scorm-packager": "^0.2.5",
     "tincanjs": "^0.50.0",

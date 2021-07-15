@@ -43,7 +43,6 @@ var creator = async (outputDir, h5pContentDir, tempDir, masteryScore, gradingMet
         language: "en-EN",
         identifier: "00",
         masteryScore: masteryScore,
-        gradingMethod: gradingMethod,
         startingPage: "index.html",
         source: tempDir,
         package: {
@@ -53,6 +52,7 @@ var creator = async (outputDir, h5pContentDir, tempDir, masteryScore, gradingMet
           date: new Date().toISOString().slice(0, 10)
         }
       };
+
       scopackager(options, async () => {
         await fs.remove(tempDir);
         resolve(
@@ -63,7 +63,8 @@ var creator = async (outputDir, h5pContentDir, tempDir, masteryScore, gradingMet
             options.package.date +
             ".zip"
         );
-      });
+      }); 
+
     });
   } catch (e) {
     await fs.remove(tempDir);
